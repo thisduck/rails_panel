@@ -87,6 +87,11 @@ function TransactionsCtrl($scope) {
       $scope.pushToMap($scope.exceptionCallsMap, key, data);
       break;
     case "render_template.action_view":
+      var layoutData = $scope.getLayoutData(data);
+      if (layoutData) {
+        $scope.pushToMap($scope.viewsMap, key, layoutData);
+      }
+
       $scope.pushToMap($scope.viewsMap, key, data);
       break;
     case "render_partial.action_view":
@@ -103,6 +108,31 @@ function TransactionsCtrl($scope) {
     default:
       console.log('Notification not supported:' + data.name);
     }
+  }
+
+  $scope.getLayoutData = function(data) {
+    if (typeof data.payload.layout === "undefined") {
+      return null;
+    }
+
+    var layoutData = $scope.clone(data);
+    var relativePath = data.payload.layout;
+    var basePath = data.payload.identifier.replace(/(.*\/app\/views\/).*/,"$1");
+    layoutData.payload.identifier  = basePath + relativePath;
+    layoutData.duration = 0;
+    return layoutData;
+  }
+
+  $scope.clone = function(obj) {
+    // http://stackoverflow.com/a/122190/803865
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor(); // changed
+
+    for(var key in obj)
+        temp[key] = $scope.clone(obj[key]);
+    return temp; 
   }
 
   $scope.pushToMap = function(map, key, data) {
