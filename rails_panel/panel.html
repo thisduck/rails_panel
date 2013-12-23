@@ -134,7 +134,9 @@
                 </thead>
                 <tbody>
                   <tr ng-repeat="view in activeViews()">
-                    <td><a href="{{view.payload.identifier | editorify:1}}">{{view.payload.identifier | normalizeViewPath}}</a></td>
+                    <td id="{{view.payload.identifier}}">
+                      <a href="{{view.payload.identifier | editorify:1}}">{{view.payload.identifier | normalizeViewPath}}</a>
+                    </td>
                     <td class="duration">{{view.duration | number:3}}</td>
                   </tr>
                 </tbody>

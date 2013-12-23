@@ -331,3 +331,6 @@ table#requests tr.selected {
   display: none;
 }
 
+#tab-views .selected {
+ background-color: wheat;
+}

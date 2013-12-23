@@ -7,7 +7,7 @@ function TransactionsCtrl($scope) {
   $scope.viewsMap          = {}; // {transactionKey: [{...}, {...}], ... }
   $scope.paramsMap         = {}; // {transactionKey: [{...}, {...}], ... }
   $scope.sqlsMap           = {}; // {transactionKey: [{...}, {...}], ... }
-  
+
   $scope.requests = function() {
     return $scope.transactionKeys.map(function(n) {
       request = $scope.requestsMap[n];
@@ -15,7 +15,7 @@ function TransactionsCtrl($scope) {
       return request;
     });
   }
-  
+
   $scope.activeKey = null;
 
   $scope.clear = function() {
@@ -77,7 +77,7 @@ function TransactionsCtrl($scope) {
         return data.durationRounded - data.payload.dbRuntimeRounded - data.payload.viewRuntimeRounded;
       }();
       $scope.requestsMap[key] = data;
-      Object.keys(data.payload.params).each(function(n) { 
+      Object.keys(data.payload.params).each(function(n) {
         $scope.pushToMap($scope.paramsMap, key, {name:n, value:data.payload.params[n]});
       });
       $scope.transactionKeys.push(key);
@@ -132,7 +132,42 @@ function TransactionsCtrl($scope) {
 
     for(var key in obj)
         temp[key] = $scope.clone(obj[key]);
-    return temp; 
+    return temp;
+  }
+
+  $scope.findViewByFile = function(file) {
+    var views = $scope.activeViews();
+
+    for (var i = 0; i < views.length; i++) {
+      if (file.match(views[i].payload.identifier)) {
+        return views[i];
+      }
+    }
+
+    return null;
+  }
+
+  $scope.getViewElement = function(view) {
+    return document.querySelector("#tab-views #" + jqSelectorEscape(view.payload.identifier));
+  }
+
+  $scope.highlightView = function(el) {
+    if (typeof $scope.selectedElement !== "undefined") {
+      $scope.selectedElement.className = "";
+    }
+
+    el.className = "selected";
+  }
+
+  $scope.addLineNumber = function(el,line) {
+    if (typeof $scope.selectedElement !== "undefined") {
+      selectedUrl = $scope.selectedElement.querySelector("a");
+      selectedUrl.innerText = selectedUrl.innerText.replace(/(.*):.*/,"$1");
+    }
+
+    var url = el.querySelector("a");
+    var file = url.innerText;
+    url.innerText = file + ":" + line;
   }
 
   $scope.pushToMap = function(map, key, data) {
@@ -140,7 +175,7 @@ function TransactionsCtrl($scope) {
     if (typeof value == 'undefined') {
       map[key] = [data];
     } else {
-      value.push(data) 
+      value.push(data)
     }
   }
 

@@ -1,3 +1,7 @@
+var jqSelectorEscape = function(text) {
+ return text.replace(/([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g, "\\$&");
+};
+
 chrome_getJSON = function(url, callback) {
   console.log("sending RPC:" + url);
   chrome.extension.sendRequest({action:'getJSON',url:url}, callback);
@@ -48,6 +52,25 @@ $(function() {
     });
 
     key('⌘+k, ctrl+l', function(){ clearData(scope) });
+
+    chrome.devtools.panels.elements.onSelectionChanged.addListener(function(){
+      chrome.devtools.inspectedWindow.eval("$0.getAttribute('data-orig-file-line')",function(sourceLocation){
+        if (sourceLocation) {
+          var result = sourceLocation.split(":");
+          var file = result[0];
+          var line = result[1];
+          
+          var view = scope.findViewByFile(file);
+
+          if (view) {
+            var el = scope.getViewElement(view);
+            scope.highlightView(el);
+            scope.addLineNumber(el,line);
+            scope.selectedElement = el; 
+          }
+        }
+      });
+    });
 
     chrome.devtools.network.onRequestFinished.addListener(
       function(request) {
