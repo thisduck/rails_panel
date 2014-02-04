@@ -85,9 +85,12 @@
                 <li class="tabbed-pane-header-tab">
                   <a href="#tab-error" class="tabbed-pane-header-tab-title">Error</a>
                 </li>
+                <li class="tabbed-pane-header-tab">
+                  <a href="#tab-source" class="tabbed-pane-header-tab-title">Source</a>
+                </li>
               </ul>
             </div>
-          </div> 
+          </div>
           <div class="tabbed-pane-content data-grid data-grid-details">
            <div id="tab-params">
               <table id="params">
@@ -157,6 +160,10 @@
                   <td>{{exception.payload.call}}</td>
                 </tr>
               </table>
+            </div>
+            <div id="tab-source">
+              <span id="template-source">
+              </span>
             </div>
           </div>
         </div>

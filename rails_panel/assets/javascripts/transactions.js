@@ -7,6 +7,8 @@ function TransactionsCtrl($scope) {
   $scope.viewsMap          = {}; // {transactionKey: [{...}, {...}], ... }
   $scope.paramsMap         = {}; // {transactionKey: [{...}, {...}], ... }
   $scope.sqlsMap           = {}; // {transactionKey: [{...}, {...}], ... }
+  $scope.templateSourceMap = {}; // {transactionKey: [{...}, {...}], ... }
+  $scope.selectedElement   = null; 
 
   $scope.requests = function() {
     return $scope.transactionKeys.map(function(n) {
@@ -43,6 +45,26 @@ function TransactionsCtrl($scope) {
 
   $scope.activeLog = function() {
     return $scope.logsMap[$scope.activeKey];
+  }
+
+  $scope.activeDOMSource = function() {
+    console.log("activeDOMSource");
+    if ($scope.templateSourceMap[$scope.activeKey]) {
+      if ($scope.selectedElement) {
+        var sourceLocation = $scope.selectedElement.getAttribute('data-orig-file-line');  
+        var file = sourceLocation.split(":")[0];
+        return $scope.templateSourceMap[$scope.activeKey][0].payload.template_source_map[file];
+      }
+    }
+    return "YEAH";
+  }
+
+  $scope.showTemplateSource = function(file,line) {
+    var templateSource = $scope.templateSourceMap[$scope.activeKey][0];
+    var source = templateSource.payload.template_source_map[file];
+
+    var $container = document.querySelector("#template-source");
+    $container.innerText = source;
   }
 
   $scope.activeExceptionCalls = function() {
@@ -105,6 +127,9 @@ function TransactionsCtrl($scope) {
         $scope.pushToMap($scope.sqlsMap, key, data);
       }
       break;
+    case "meta_request.source_of_templates":
+      $scope.pushToMap($scope.templateSourceMap, key, data);
+      break;
     default:
       console.log('Notification not supported:' + data.name);
     }
@@ -152,7 +177,7 @@ function TransactionsCtrl($scope) {
   }
 
   $scope.highlightView = function(el) {
-    if (typeof $scope.selectedElement !== "undefined") {
+    if ($scope.selectedElement) {
       $scope.selectedElement.className = "";
     }
 
@@ -160,7 +185,7 @@ function TransactionsCtrl($scope) {
   }
 
   $scope.addLineNumber = function(el,line) {
-    if (typeof $scope.selectedElement !== "undefined") {
+    if ($scope.selectedElement) {
       selectedUrl = $scope.selectedElement.querySelector("a");
       selectedUrl.innerText = selectedUrl.innerText.replace(/(.*):.*/,"$1");
     }

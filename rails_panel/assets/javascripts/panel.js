@@ -64,8 +64,12 @@ $(function() {
 
           if (view) {
             var el = scope.getViewElement(view);
+
             scope.highlightView(el);
             scope.addLineNumber(el,line);
+
+            scope.showTemplateSource(file,line);
+
             scope.selectedElement = el; 
           }
         }
