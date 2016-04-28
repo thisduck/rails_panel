@@ -7,7 +7,7 @@ module Haml
       if node.type == :tag
         file = @options[:filename]
         if defined?(::Rails)
-          file.gsub!(::Rails.root, "")
+          file.gsub!(::Rails.root.to_s, "")
           file.gsub!(/^\//, "")
         end
 
