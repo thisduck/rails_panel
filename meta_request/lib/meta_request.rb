@@ -19,3 +19,4 @@ module MetaRequest
 end
 
 require "meta_request/railtie"
+require "meta_request/haml"
